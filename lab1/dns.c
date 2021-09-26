@@ -27,8 +27,6 @@ typedef struct Node_ {
   struct Node *next_node;
 } Node;
 
-Node *hash_table[SIZE];
-
 unsigned int GetHash(const char *host_name) {
   unsigned int hash = FIRST;
   while (*host_name) {
@@ -39,19 +37,20 @@ unsigned int GetHash(const char *host_name) {
   return hash % SIZE;
 }
 
-void InsertNode(const char *host_name, IPADDRESS ip) {
+void InsertNode(DNSHandle hDNS, const char *host_name, IPADDRESS ip) {
   Node *current_node, *next_node;
   unsigned int index = GetHash(host_name);
   current_node = (Node *) malloc(sizeof(Node));
-  next_node = (Node *) hash_table[index];
+  next_node = ((Node **) hDNS)[index];
   current_node->next_node = (struct Node *) next_node;
   current_node->ip = ip;
   strcpy_s((char *) current_node->host_name, 201, host_name);
-  hash_table[index] = (Node *) current_node;
+  ((Node **) hDNS)[index] = (Node *) current_node;
 }
 
 DNSHandle InitDNS() {
   DNSHandle hDNS = (unsigned int) (Node *) calloc(SIZE, sizeof(Node));
+
   if ((Node *) hDNS != NULL) {
     return hDNS;
   }
@@ -82,7 +81,7 @@ void LoadHostsFile(DNSHandle hDNS, const char *hostsFilePath) {
         (ip3 & 0xFF) << 8 |
         (ip4 & 0xFF);
 
-    InsertNode(buffer, ip);
+    InsertNode(hDNS, buffer, ip);
   }
 
   fclose(fInput);
@@ -91,7 +90,7 @@ void LoadHostsFile(DNSHandle hDNS, const char *hostsFilePath) {
 IPADDRESS DnsLookUp(DNSHandle hDNS, const char *hostName) {
 
   unsigned int index = GetHash(hostName);
-  Node *temp_node = (Node *) hash_table[index];
+  Node *temp_node = ((Node **) hDNS)[index];
 
   while (temp_node != NULL) {
     if (strcmp(hostName, (const char *) temp_node->host_name) == 0) {
@@ -105,7 +104,7 @@ IPADDRESS DnsLookUp(DNSHandle hDNS, const char *hostName) {
 
 void ShutdownDNS(DNSHandle hDNS) {
   for (size_t i = 0; i < SIZE; ++i) {
-    Node *current = (Node *) hash_table[i];
+    Node *current = ((Node **) hDNS)[i];
     Node *next_node = NULL;
 
     while (current != NULL) {
