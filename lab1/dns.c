@@ -11,7 +11,7 @@
 #include <malloc.h>
 #include <string.h>
 
-#define SIZE 13000
+#define SIZE 13001
 
 //prime numbers for hash
 #define A 54059
@@ -34,6 +34,7 @@ unsigned int GetHash(const char *host_name) {
     ++host_name;
   }
   hash %= C;
+
   return hash % SIZE;
 }
 
@@ -88,7 +89,6 @@ void LoadHostsFile(DNSHandle hDNS, const char *hostsFilePath) {
 }
 
 IPADDRESS DnsLookUp(DNSHandle hDNS, const char *hostName) {
-
   unsigned int index = GetHash(hostName);
   Node *temp_node = ((Node **) hDNS)[index];
 
@@ -96,6 +96,7 @@ IPADDRESS DnsLookUp(DNSHandle hDNS, const char *hostName) {
     if (strcmp(hostName, (const char *) temp_node->host_name) == 0) {
       return temp_node->ip;
     }
+
     temp_node = (Node *) temp_node->next_node;
   }
 
@@ -113,6 +114,7 @@ void ShutdownDNS(DNSHandle hDNS) {
       current = next_node;
     }
   }
+
   if ((Node *) hDNS != NULL) {
     free((Node *) hDNS);
   }
