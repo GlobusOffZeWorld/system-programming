@@ -109,48 +109,54 @@ const char data[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 
 int state = 1;
 const char *commands[] = {"GET_DATA", "GET_FILE", "GET_COMMAND"};
+const int commandsLength[] = {8, 8, 11};
 int commandIndex;
 
 enum test_status validate_message(struct Message *msg) {
   char *message = msg->text_message;
   if (msg->direction == 0) {
     if (state == 1) {
-      if (strcmp(message, "CONNECT") == 0) {
+      if (!strcmp(message, "CONNECT")) {
         state = 2;
         return MESSAGE_VALID;
       }
     } else if (state == 3) {
-      if (strcmp(message, "GET_VER") == 0) {
+      if (!strcmp(message, "GET_VER")) {
         state = 4;
         return MESSAGE_VALID;
-      } else if (strcmp(message, "GET_DATA") == 0) {
+      } else if (!strcmp(message, "GET_DATA")) {
         commandIndex = 0;
         state = 5;
         return MESSAGE_VALID;
-      } else if (strcmp(message, "GET_FILE") == 0) {
+      } else if (!strcmp(message, "GET_FILE")) {
         commandIndex = 1;
         state = 5;
         return MESSAGE_VALID;
-      } else if (strcmp(message, "GET_COMMAND") == 0) {
+      } else if (!strcmp(message, "GET_COMMAND")) {
         commandIndex = 2;
         state = 5;
         return MESSAGE_VALID;
-      } else if (strcmp(message, "GET_B64") == 0) {
+      } else if (!strcmp(message, "GET_B64")) {
         state = 6;
         return MESSAGE_VALID;
-      } else if (strcmp(message, "DISCONNECT") == 0) {
+      } else if (!strcmp(message, "DISCONNECT")) {
         state = 7;
         return MESSAGE_VALID;
       }
     }
   } else if (msg->direction == 1) {
     if (state == 2) {
-      if (strcmp(message, "CONNECT_OK") == 0) {
+      if (!strcmp(message, "CONNECT_OK")) {
         state = 3;
         return MESSAGE_VALID;
       }
+    } else if (state == 7) {
+      if (!strcmp(message, "DISCONNECT_OK")) {
+        state = 1;
+        return MESSAGE_VALID;
+      }
     } else if (state == 4) {
-      if (strncmp(message, "VERSION ", 8) == 0) {
+      if (!strncmp(message, "VERSION ", 8)) {
         message += 8;
         if (*message > 48 && *message < 58) {
           for (++message; *message != '\0'; ++message) {
@@ -164,21 +170,20 @@ enum test_status validate_message(struct Message *msg) {
         }
       }
     } else if (state == 5) {
-      if (strncmp(message, commands[commandIndex], strlen(commands[commandIndex])) == 0) {
-        message += strlen(commands[commandIndex]);
+      if (!strncmp(message, commands[commandIndex], commandsLength[commandIndex])) {
+        message += commandsLength[commandIndex];
         if (*message == ' ') {
           ++message;
           char *spaceCheck;
           while (data[*message]) {
             ++message;
           }
-          spaceCheck = (char *) (*message == ' ');
-          if (spaceCheck) {
+          if (spaceCheck = *message == ' ') {
             spaceCheck = message + 1;
           }
 
           if (spaceCheck) {
-            if (strcmp(spaceCheck, commands[commandIndex]) == 0) {
+            if (!strcmp(spaceCheck, commands[commandIndex])) {
               state = 3;
               return MESSAGE_VALID;
             }
@@ -186,7 +191,7 @@ enum test_status validate_message(struct Message *msg) {
           ++message;
         }
       }
-    } else if (state == 6 && (strncmp(message, "B64: ", 5) == 0)) {
+    } else if (state == 6 && (!strncmp(message, "B64: ", 5))) {
       message += 5;
       char *begin = message;
       while (base64[*message]) {
@@ -201,11 +206,6 @@ enum test_status validate_message(struct Message *msg) {
         return MESSAGE_VALID;
       }
       ++message;
-    } else if (state == 7) {
-      if (strcmp(message, "DISCONNECT_OK") == 0) {
-        state = 1;
-        return MESSAGE_VALID;
-      }
     }
   }
 
