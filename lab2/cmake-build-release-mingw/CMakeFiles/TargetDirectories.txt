@@ -1,0 +1,3 @@
+D:/programming/projects/processList/cmake-build-release-mingw/CMakeFiles/processList.dir
+D:/programming/projects/processList/cmake-build-release-mingw/CMakeFiles/edit_cache.dir
+D:/programming/projects/processList/cmake-build-release-mingw/CMakeFiles/rebuild_cache.dir
