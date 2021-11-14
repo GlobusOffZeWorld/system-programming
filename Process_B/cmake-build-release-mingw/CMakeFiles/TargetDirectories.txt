@@ -1,0 +1,3 @@
+D:/programming/projects/system-programming/Process_B/cmake-build-release-mingw/CMakeFiles/Process_B.dir
+D:/programming/projects/system-programming/Process_B/cmake-build-release-mingw/CMakeFiles/edit_cache.dir
+D:/programming/projects/system-programming/Process_B/cmake-build-release-mingw/CMakeFiles/rebuild_cache.dir

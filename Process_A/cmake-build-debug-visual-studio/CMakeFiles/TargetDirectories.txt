@@ -1,0 +1,3 @@
+D:/programming/projects/system-programming/Process_A/cmake-build-debug-visual-studio/CMakeFiles/Process_A.dir
+D:/programming/projects/system-programming/Process_A/cmake-build-debug-visual-studio/CMakeFiles/edit_cache.dir
+D:/programming/projects/system-programming/Process_A/cmake-build-debug-visual-studio/CMakeFiles/rebuild_cache.dir
