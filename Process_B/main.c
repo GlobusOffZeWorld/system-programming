@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 int main() {
-  LPCWSTR pipeName = "\\\\.\\pipe\\address_pipe";
+  LPCSTR pipeName = "\\\\.\\pipe\\address_pipe";
   HANDLE hNamedPipe;
   hNamedPipe = CreateNamedPipe(
       pipeName,
@@ -31,7 +31,7 @@ int main() {
            &dwBytesRead,
            (LPOVERLAPPED)NULL
   );
-  printf("String get: %s \n", (char*)address);
+  printf("String get: %s\n", (char*)address);
   CloseHandle(hNamedPipe);
   return 0;
 }

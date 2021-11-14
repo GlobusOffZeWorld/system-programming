@@ -3,7 +3,7 @@
 #include <stdio.h>
 #define MAXLEN 100
 
-DWORD getProcessID(LPCWSTR process_name) {
+DWORD getProcessID(LPCSTR process_name) {
   DWORD processID = 0;
   HANDLE snapHandle;
   PROCESSENTRY32 processEntry;
@@ -25,10 +25,10 @@ DWORD getProcessID(LPCWSTR process_name) {
   return 0;
 }
 
-char SendAdress(DWORD szAdress)
+char SendAddress(DWORD szAddress)
 {
   HANDLE hNamedPipe;
-  LPCWSTR pipeName = "\\\\.\\pipe\\address_pipe";
+  LPCSTR pipeName = "\\\\.\\pipe\\address_pipe";
   hNamedPipe = CreateFile(
       pipeName,
       GENERIC_WRITE,
@@ -44,11 +44,11 @@ char SendAdress(DWORD szAdress)
     return 0;
   }
   DWORD dwBytesWritten;
-  printf("Wating for server read data...\n");
+  printf("Waiting for server read data...\n");
   if (!WriteFile(
       hNamedPipe,
-      szAdress,
-      sizeof(szAdress),
+      &szAddress,
+      sizeof(szAddress),
       &dwBytesWritten,
       (LPOVERLAPPED)NULL))
   {
@@ -67,10 +67,10 @@ int main() {
   char *a = (char *) malloc(szSize);
   printf("Enter string: ");
   gets_s(a, MAXLEN - 1);
-  HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, getProcessID(L"pr_B.exe"));
+  HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, getProcessID("Process_B.exe"));
   LPVOID szAddress = VirtualAllocEx(hProcess, 0, szSize, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE);
   WriteProcessMemory(hProcess, szAddress, a, szSize, 0);
-  SendAdress((DWORD) szAddress);
+  SendAddress((DWORD) szAddress);
   free(a);
   VirtualFreeEx(hProcess, szAddress, 0, MEM_RELEASE);
   return 0;
